@@ -73,7 +73,7 @@ sub print_report {
         "Name", "ID", "Math", "Sci", "Eng", "His", "Avg", "Grd";
     say "-" x 65;
 
-    for my $s (sort { $s->{name} cmp $a->{name} } @$students) {
+    for my $s (sort { $a->{name} cmp $b->{name} } @$students) {
         my $avg   = calculate_average($s);
         my $grade = get_grade($avg);
         printf "%-15s %-8s  %5s %5s %5s %5s | %6.1f %3s\n",

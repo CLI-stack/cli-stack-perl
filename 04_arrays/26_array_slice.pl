@@ -28,7 +28,7 @@ my @rev = reverse @nums[2..5];
 say "Reversed slice: " . join(", ", @rev);
 
 # Practical: extract columns from data
-my @record = ("Alice", 30, "Engineer", "NYC", "alice@email.com");
+my @record = ("Alice", 30, "Engineer", "NYC", "alice\@email.com");
 # field positions: 0=name, 1=age, 2=job, 3=city, 4=email
 my ($name, $city) = @record[0, 3];
 say "\nName: $name, City: $city";

@@ -6,7 +6,7 @@ use warnings;
 use feature 'say';
 
 # Default values using //= or //
-sub connect {
+sub connect_db {
     my (%args) = @_;
     my $host    = $args{host}    // "localhost";
     my $port    = $args{port}    // 3306;
@@ -15,9 +15,9 @@ sub connect {
     say "Connecting to $host:$port (timeout: ${timeout}s)";
 }
 
-connect(host => "db.prod.com", port => 5432);
-connect(host => "db.local");
-connect();   # all defaults
+connect_db(host => "db.prod.com", port => 5432);
+connect_db(host => "db.local");
+connect_db();   # all defaults
 
 # Positional defaults using shift
 sub greet {
@@ -49,5 +49,5 @@ sub create_user {
     say "Created: $args{name} <$args{email}> [$role]";
 }
 
-create_user(name => "Alice", email => "alice@example.com");
-create_user(name => "Bob",   email => "bob@example.com", role => "admin");
+create_user(name => "Alice", email => "alice\@example.com");
+create_user(name => "Bob",   email => "bob\@example.com", role => "admin");

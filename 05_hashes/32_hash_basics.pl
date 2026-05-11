@@ -19,7 +19,7 @@ say "Name: $person{name}";
 say "Age : $person{age}";
 
 # Add or update a key
-$person{email} = "alice@example.com";
+$person{email} = "alice\@example.com";
 $person{age}   = 31;
 say "Updated age  : $person{age}";
 say "Added email  : $person{email}";
