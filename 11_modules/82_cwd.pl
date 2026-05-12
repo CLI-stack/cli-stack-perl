@@ -1,51 +1,47 @@
 #!/usr/bin/perl
 # LESSON 82: Cwd - Current Working Directory
+# Find out where your script is and navigate the filesystem
 
 use strict;
 use warnings;
 use feature 'say';
-use Cwd qw(cwd getcwd abs_path);
+use Cwd qw(cwd getcwd abs_path);   # import directory functions
+use File::Basename 'dirname';       # import dirname for path manipulation
 
-# Get current directory
+# cwd() and getcwd() both return the current working directory
 my $dir = cwd();
 say "Current dir (cwd)    : $dir";
-say "Current dir (getcwd) : " . getcwd();
+say "Current dir (getcwd) : " . getcwd();   # identical to cwd()
 
-# abs_path - resolve symlinks and relative paths
+# abs_path() resolves symlinks and relative paths to their real absolute path
 say "\nabs_path examples:";
-say abs_path(".");
-say abs_path("..");
+say abs_path(".");    # absolute path of current directory
+say abs_path("..");   # absolute path of parent directory
 
-# Practical: get script's own directory
-my $script_dir = abs_path($0);   # $0 = path to current script
-use File::Basename 'dirname';
-$script_dir = dirname(abs_path($0));
+# Get the directory where THIS script is located
+# $0 = the path to the currently running script (set by Perl automatically)
+my $script_dir = dirname(abs_path($0));   # abs_path($0) = full path; dirname = remove filename
 say "\nThis script is in: $script_dir";
 
-# Change directory temporarily
+# chdir() changes the current directory
 say "\nOriginal dir: " . cwd();
 
-{
-    # Use local scope for temporary chdir
-    chdir("/tmp") or die "Cannot chdir to /tmp: $!";
-    say "Inside block: " . cwd();
+chdir("/tmp") or die "Cannot chdir to /tmp: $!";   # change to /tmp
+say "After chdir : " . cwd();                        # now in /tmp
 
-    # Do work in /tmp...
-    my @files = glob("perl_*");
-    say "Perl test files in /tmp: " . scalar(@files);
-}
+my @files = glob("perl_*");                          # list perl_* files in /tmp
+say "Perl test files in /tmp: " . scalar(@files);
 
-# After the block, we need to restore manually
-chdir($dir) or die "Cannot return: $!";
-say "After restore: " . cwd();
+chdir($dir) or die "Cannot return to $dir: $!";     # go back to original directory
+say "After restore: " . cwd();                       # back where we started
 
-# Better: save and restore with eval block
-my $saved = cwd();
+# Safe temporary directory change using eval for cleanup
+my $saved = cwd();   # remember where we are
 eval {
-    chdir("/tmp") or die "chdir failed: $!";
-    say "Working in: " . cwd();
-    # ... do work
+    chdir("/tmp") or die "chdir failed: $!";   # die inside eval is caught
+    say "\nTemporarily in: " . cwd();
+    # ... do work in /tmp ...
 };
-chdir($saved);
-warn $@ if $@;
-say "Restored to: " . cwd();
+chdir($saved);        # ALWAYS restore, even if eval failed
+warn $@ if $@;        # report any error that occurred in eval
+say "Safely restored to: " . cwd();

@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 # LESSON 56: Appending to Files
+# '>>' mode adds content to the END of an existing file without erasing it
 
 use strict;
 use warnings;
@@ -7,16 +8,16 @@ use feature 'say';
 
 my $logfile = "/tmp/perl_app.log";
 
-# Append mode '>>' - adds to existing file, doesn't overwrite
+# This subroutine appends one log entry to the log file
 sub write_log {
-    my ($level, $message) = @_;
-    open(my $fh, '>>', $logfile) or die "Cannot open log: $!";
-    my $timestamp = scalar localtime();
-    print $fh "[$timestamp] [$level] $message\n";
-    close($fh);
+    my ($level, $message) = @_;                               # get log level and message
+    open(my $fh, '>>', $logfile) or die "Cannot open log: $!";  # '>>' = append mode
+    my $timestamp = scalar localtime();                        # get current date/time as string
+    print $fh "[$timestamp] [$level] $message\n";             # write formatted log line
+    close($fh);                                               # close after each write
 }
 
-# Write some log entries
+# Write several log entries one at a time
 write_log("INFO",  "Application started");
 write_log("DEBUG", "Loading configuration");
 write_log("INFO",  "Server listening on port 8080");
@@ -24,21 +25,20 @@ write_log("WARN",  "High memory usage detected");
 write_log("ERROR", "Database connection timeout");
 write_log("INFO",  "Reconnecting to database...");
 
-# Read back the log
+# Read back the complete log file
 say "--- Log file contents ---";
 open(my $fh, '<', $logfile) or die $!;
 while (<$fh>) {
-    print;
+    print;   # $_ is set to each line; print prints it
 }
 close($fh);
 
-# Count lines in file
+# Count how many lines are in the file
 open($fh, '<', $logfile) or die $!;
 my $lines = 0;
-$lines++ while <$fh>;
+$lines++ while <$fh>;    # increment for every line read
 close($fh);
 say "\nTotal log entries: $lines";
 
-# Append another entry
-write_log("INFO", "Script completed");
+write_log("INFO", "Script completed");   # append one more entry
 say "Added final log entry.";

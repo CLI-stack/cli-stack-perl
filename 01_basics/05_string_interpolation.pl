@@ -1,30 +1,27 @@
 #!/usr/bin/perl
 # LESSON 5: String Interpolation vs Concatenation
+# Interpolation = Perl replaces variable names with their values inside strings
 
 use strict;
 use warnings;
 use feature 'say';
 
-my $first = "John";
-my $last  = "Doe";
+my $first = "John";   # store first name in $first
+my $last  = "Doe";    # store last name in $last
 
-# Double quotes: variables ARE expanded
-say "Full name: $first $last";
+say "Full name: $first $last";   # double quotes: $first and $last ARE replaced with their values
+say 'Full name: $first $last';   # single quotes: variables are NOT replaced - printed literally
 
-# Single quotes: variables are NOT expanded (literal)
-say 'Full name: $first $last';   # prints literally
+my $full = $first . " " . $last;  # . joins strings together (concatenation)
+say "Concatenated: $full";         # prints: Concatenated: John Doe
 
-# Concatenation with dot operator
-my $full = $first . " " . $last;
-say "Concatenated: $full";
+my $a = 5;   # store 5 in $a
+my $b = 3;   # store 3 in $b
 
-# Embedding expressions in strings with ${}
-my $a = 5;
-my $b = 3;
-say "Sum is: ${\ ($a + $b) }";   # expression inside string
+say "Sum is: ${\ ($a + $b) }";  # ${\ expr } lets you embed any expression inside a string
+                                 # \( ) creates a reference to the result, ${ } dereferences it
 
-# Repeating a string with x operator
-my $line = "-" x 30;
-say $line;
-say "Hello Perl!";
-say $line;
+my $line = "-" x 30;  # x is the repetition operator - repeat "-" exactly 30 times
+say $line;            # prints 30 dashes as a separator
+say "Hello Perl!";    # main content
+say $line;            # prints 30 dashes again

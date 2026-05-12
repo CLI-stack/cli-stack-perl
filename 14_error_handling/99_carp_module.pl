@@ -1,57 +1,60 @@
 #!/usr/bin/perl
-# LESSON 99: Carp Module - Better Error Reporting
+# LESSON 99: Carp Module - Better Error Location Reporting
+# Carp makes errors point to WHERE THE CALLER MADE THE MISTAKE
+# instead of where your library code detected it
 
 use strict;
 use warnings;
 use feature 'say';
 use Carp qw(carp croak confess cluck);
+# carp    = like warn, but reports from the CALLER'S file/line
+# croak   = like die,  but reports from the CALLER'S file/line
+# cluck   = like warn, but includes full stack trace
+# confess = like die,  but includes full stack trace
 
-# carp   = warn that reports from the CALLER's perspective
-# croak  = die  that reports from the CALLER's perspective
-# cluck  = warn with full stack trace
-# confess= die  with full stack trace
-
-# Without Carp: error points to the library, not the calling code
-# With Carp:    error points to where the bad call was made
+# Without Carp: "Error at MyLib.pm line 5" - not helpful, you already know that
+# With croak:   "Error at main.pl line 12" - tells you WHERE the bad call was made
 
 package Validator;
 use Carp qw(carp croak);
 
 sub validate_age {
     my ($class, $age) = @_;
-    croak "Age must be a positive number (got: $age)"
+    croak "Age must be a positive number (got: $age)"   # croak reports from CALLER'S location
         unless defined $age && $age =~ /^\d+$/ && $age > 0;
-    carp "Age $age seems unusually high" if $age > 150;
-    return 1;
+    carp "Age $age seems unrealistically high"          # carp = warning from caller's location
+        if $age > 150;
+    return 1;   # valid
 }
 
 package main;
 
 say "=== croak from Validator ===";
-eval { Validator->validate_age(-5) };
-say "Error: $@" if $@;
+eval { Validator->validate_age(-5) };     # invalid age - will croak
+say "Error: $@" if $@;                   # error message points to THIS line (main.pl)
 
-eval { Validator->validate_age(200) };   # triggers carp (warning)
-say "No error, just a warning above" unless $@;
+eval { Validator->validate_age(200) };    # valid number but high - will carp (warning)
+say "200 passed validation (with warning)" unless $@;
 
-# confess - full call stack
+# confess - die with complete call stack trace (best for debugging deep problems)
 package DeepModule;
 use Carp 'confess';
 
-sub level3 { confess "Deep error with stack trace" }
-sub level2 { level3() }
-sub level1 { level2() }
+sub level3 { confess "Deep error with full stack trace" }  # die from here
+sub level2 { level3() }   # called by level2
+sub level1 { level2() }   # called by level1
 
 package main;
 
-say "\n=== confess stack trace ===";
-eval { DeepModule::level1() };
+say "\n=== confess (full stack trace) ===";
+eval { DeepModule::level1() };   # chain of calls leading to confess
 if ($@) {
-    # Print just first 3 lines of trace
-    my @trace = split /\n/, $@;
-    say $_ for @trace[0..2];
+    my @trace = split /\n/, $@;       # split trace into individual lines
+    say $_ for @trace[0..2];          # show first 3 lines of the trace
     say "... (stack trace continues)" if @trace > 3;
 }
 
-# Good practice: use Carp in modules, die/warn in scripts
-say "\nBest practice: Carp in library code, die in main scripts";
+# GUIDELINE:
+# - Use die/warn in SCRIPTS (main programs)
+# - Use croak/carp in MODULES/LIBRARIES (code others call)
+say "\nUse croak/carp in reusable modules, die/warn in scripts.";

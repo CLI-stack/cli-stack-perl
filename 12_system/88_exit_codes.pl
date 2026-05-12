@@ -1,52 +1,50 @@
 #!/usr/bin/perl
 # LESSON 88: Exit Codes and Signal Handling
+# How to end a script properly and react to OS signals
 
 use strict;
 use warnings;
 use feature 'say';
 
-# exit() - terminate the script with an exit code
-# 0 = success, non-zero = failure (convention)
 say "Script starting...";
 
-# Check a condition and exit with appropriate code
-my $config_ok = 1;   # simulate config check
+# exit(N) terminates the script with exit code N
+# Convention: 0 = success, any other number = some kind of failure
+# Other programs check this code to know if your script succeeded
+
+my $config_ok = 1;   # simulate a configuration check result
 
 unless ($config_ok) {
-    say STDERR "ERROR: Configuration is invalid";
-    exit(1);   # exit with failure code
+    say STDERR "ERROR: Configuration is invalid";   # errors go to STDERR
+    exit(1);                                          # exit immediately with failure code
 }
-say "Config OK";
+say "Config is OK";
 
-# Common exit codes:
-# 0  = success
-# 1  = general error
-# 2  = misuse of shell command
-# 126 = command cannot execute
-# 127 = command not found
-# 128+n = fatal signal n
+# %SIG is a special hash mapping signal names to handler subroutines
+# When the OS sends a signal, Perl calls the corresponding handler
+$SIG{INT}  = sub { say "\nCaught Ctrl+C (SIGINT)! Cleaning up..."; exit(0); };
+# SIGINT is sent when user presses Ctrl+C
 
-# die() exits with code 1 (unless in eval block)
-# use die for errors, exit for normal termination
+$SIG{TERM} = sub { say "\nCaught TERM signal. Shutting down."; exit(0); };
+# SIGTERM is sent by kill command or system shutdown
 
-# Trap signals with %SIG
-$SIG{INT}  = sub { say "\nCaught Ctrl+C! Cleaning up..."; exit(0); };
-$SIG{TERM} = sub { say "\nCaught TERM signal. Exiting.";  exit(0); };
-$SIG{HUP}  = sub { say "Caught HUP - reloading config..."; };
+$SIG{HUP}  = sub { say "Caught HUP signal - would reload config here."; };
+# SIGHUP is often used to tell a daemon to reload its configuration
 
 say "Signal handlers installed.";
-say "(Press Ctrl+C to test INT handler, or let it finish)";
 
-# END block - runs on any exit (like a destructor/finally)
+# END block: code in END{} runs ALWAYS when the script exits, no matter how it exits
+# Like "finally" in other languages, or a destructor
 END {
-    say "END block: cleanup before exit";
+    say "END block executing: cleaning up before script ends";
+    # Close files, release resources, log completion, etc.
 }
 
-# Simulate work
+# Simulate doing some work
 for my $i (1..3) {
     say "Working... step $i";
-    select(undef, undef, undef, 0.5);   # sleep 0.5 seconds
+    select(undef, undef, undef, 0.3);   # sleep for 0.3 seconds (portable sleep)
 }
 
-say "Done!";
-exit(0);   # explicit success exit
+say "All work done!";
+exit(0);   # explicit successful exit (0 = success)

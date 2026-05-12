@@ -1,44 +1,43 @@
 #!/usr/bin/perl
 # LESSON 23: Array Basics
+# Arrays store an ORDERED list of values - like a numbered list
 
 use strict;
 use warnings;
 use feature 'say';
 
-# Arrays store ordered lists of scalars
-my @fruits = ("apple", "banana", "cherry");
-my @nums   = (1, 2, 3, 4, 5);
-my @mixed  = ("hello", 42, 3.14, "world");
+# Arrays use @ sigil; elements are enclosed in parentheses
+my @fruits = ("apple", "banana", "cherry");   # array of 3 strings
+my @nums   = (1, 2, 3, 4, 5);                # array of 5 numbers
+my @mixed  = ("hello", 42, 3.14, "world");   # arrays can hold mixed types
 
-# Access by index (0-based)
-say $fruits[0];   # apple
-say $fruits[1];   # banana
-say $fruits[2];   # cherry
-say $fruits[-1];  # cherry (last element)
-say $fruits[-2];  # banana (second to last)
+# Access individual elements with $array[index] - index starts at 0
+say $fruits[0];   # first element  -> apple
+say $fruits[1];   # second element -> banana
+say $fruits[2];   # third element  -> cherry
+say $fruits[-1];  # -1 = last element (count from end) -> cherry
+say $fruits[-2];  # -2 = second to last -> banana
 
-# Array size
-say "Number of fruits: " . scalar(@fruits);
-say "Last index      : $#fruits";   # index of last element
+# Array size and last index
+say "Number of fruits: " . scalar(@fruits);  # scalar() in numeric context = count -> 3
+say "Last index      : $#fruits";            # $#arrayname = index of last element -> 2
 
-# Print all elements
+# Iterate through all elements with foreach
 say "\nAll fruits:";
-foreach my $fruit (@fruits) {
-    say "  $fruit";
+foreach my $fruit (@fruits) {   # $fruit takes each value in turn
+    say "  $fruit";              # print each element
 }
 
-# Range operator ..
-my @ten = (1..10);
+# Range operator .. creates a list of consecutive values
+my @ten     = (1..10);          # creates: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+my @letters = ('a'..'z');       # works with letters too
 say "\n1 to 10: " . join(", ", @ten);
+say "Alphabet: " . join("", @letters);   # no separator = all stuck together
 
-my @letters = ('a'..'z');
-say "Alphabet: " . join("", @letters);
-
-# Array in boolean context = true if non-empty
+# Array in boolean context: true if non-empty, false if empty
 if (@fruits) {
-    say "\nArray is not empty";
+    say "\nArray is not empty";   # runs because @fruits has elements
 }
 
-# Empty array
-my @empty = ();
-say "Empty: " . scalar(@empty);   # 0
+my @empty = ();                        # create an empty array
+say "Empty array count: " . scalar(@empty);  # prints: 0

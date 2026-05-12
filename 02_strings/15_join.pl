@@ -1,38 +1,37 @@
 #!/usr/bin/perl
-# LESSON 15: Reverse and Repeat Strings
+# LESSON 15: Reverse Strings and Palindrome Check
+# reverse() works on both strings and arrays
 
 use strict;
 use warnings;
 use feature 'say';
 
-# reverse a string
-my $str = "Hello Perl";
-my $rev = reverse $str;
-say "Original : $str";
-say "Reversed : $rev";
+my $str = "Hello Perl";     # original string
+my $rev = reverse $str;     # reverse() flips the order of characters
+say "Original : $str";      # prints: Hello Perl
+say "Reversed : $rev";      # prints: lreP olleH
 
-# Check if palindrome
+# Check if a word reads the same forwards and backwards (palindrome)
 sub is_palindrome {
-    my $s = lc(shift);
-    $s =~ s/\s+//g;        # remove spaces
-    return $s eq reverse($s);
+    my $s = lc(shift);      # shift gets the first argument; lc() lowercases it
+    $s =~ s/\s+//g;         # remove all spaces so "race car" still works
+    return $s eq reverse($s);  # compare string to its reverse; eq = string equal
 }
 
-my @words = ("racecar", "hello", "level", "Perl", "madam");
-foreach my $word (@words) {
+my @words = ("racecar", "hello", "level", "Perl", "madam");  # test words
+foreach my $word (@words) {           # loop through each word
     if (is_palindrome($word)) {
-        say "'$word' IS a palindrome";
+        say "'$word' IS a palindrome";    # same forwards and backwards
     } else {
         say "'$word' is NOT a palindrome";
     }
 }
 
-# Repeat a string with x
-say "-" x 40;
-say "| " . " " x 36 . " |";
-say "| " . "  PERL LESSONS  " x 2 . " |";
-say "-" x 40;
+# Use x (repetition) to build visual layouts
+say "-" x 40;                            # print 40 dashes
+say "| " . " " x 36 . " |";             # padded box sides
+say "| " . "  PERL LESSONS  " x 2 . " |";  # repeated text inside box
+say "-" x 40;                            # close the box
 
-# Repeat to build a pattern
-my $pattern = "AB" x 5;
-say $pattern;   # ABABABABAB
+my $pattern = "AB" x 5;   # repeat "AB" 5 times
+say $pattern;              # prints: ABABABABAB

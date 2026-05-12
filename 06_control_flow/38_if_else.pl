@@ -1,56 +1,57 @@
 #!/usr/bin/perl
 # LESSON 38: if / elsif / else
+# Conditional execution - run different code depending on conditions
 
 use strict;
 use warnings;
 use feature 'say';
 
-my $score = 75;
+my $score = 75;   # the score we will evaluate
 
-# Basic if/elsif/else
+# if/elsif/else chain - checks conditions from top to bottom, runs first true block
 if ($score >= 90) {
-    say "Grade: A";
+    say "Grade: A";          # runs if score is 90 or above
 } elsif ($score >= 80) {
-    say "Grade: B";
+    say "Grade: B";          # runs if score is 80-89
 } elsif ($score >= 70) {
-    say "Grade: C";
+    say "Grade: C";          # runs if score is 70-79
 } elsif ($score >= 60) {
-    say "Grade: D";
+    say "Grade: D";          # runs if score is 60-69
 } else {
-    say "Grade: F";
+    say "Grade: F";          # runs if none of the above matched
 }
 
-# Postfix if (one-liner style)
-say "Passed!" if $score >= 60;
-say "Failed!" if $score < 60;
+# Postfix if - put the condition AFTER the statement (one-liner style)
+say "Passed!" if $score >= 60;    # only prints if condition is true
+say "Failed!" if $score < 60;     # won't print - condition is false
 
-# Logical operators in conditions
+# Logical operators: && (AND), || (OR), ! (NOT)
 my $age    = 25;
-my $has_id = 1;
+my $has_id = 1;    # 1 = true
 
-if ($age >= 18 && $has_id) {
+if ($age >= 18 && $has_id) {         # BOTH must be true
     say "Access granted";
 }
 
-if ($age < 18 || !$has_id) {
+if ($age < 18 || !$has_id) {         # either condition true = denied
     say "Access denied";
 } else {
-    say "Welcome!";
+    say "Welcome!";                   # neither condition was true
 }
 
-# Nested if
+# Nested if - if inside another if
 my $temp = 28;
-if ($temp > 25) {
-    if ($temp > 35) {
+if ($temp > 25) {             # outer condition: is it warm?
+    if ($temp > 35) {         # inner condition: is it very hot?
         say "Very hot!";
     } else {
-        say "Warm";
+        say "Warm";           # warm but not extreme
     }
 } else {
-    say "Cool";
+    say "Cool";               # 25 or below
 }
 
-# unless = if NOT
-unless ($score < 60) {
+# unless = the opposite of if (reads more naturally for negative conditions)
+unless ($score < 60) {        # unless means "if NOT"
     say "You passed (using unless)";
 }

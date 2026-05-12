@@ -1,14 +1,13 @@
 #!/usr/bin/perl
 # LESSON 1: Hello World
-# Every Perl script starts with the shebang line above.
-# 'use strict' and 'use warnings' are best practices - always include them.
+# This is the first line every Perl script needs - it tells the OS to use Perl
 
-use strict;
-use warnings;
+use strict;    # forces you to declare all variables - prevents typo bugs
+use warnings;  # tells Perl to warn you about risky or undefined behavior
 
-print "Hello, World!\n";  # \n = newline
-print "Welcome to Perl!\n";
+print "Hello, World!\n";  # print sends text to screen; \n means newline (go to next line)
+print "Welcome to Perl!\n";  # you can call print as many times as you want
 
-# say() is like print but adds newline automatically
-use feature 'say';
-say "This uses say() - no need for \\n";
+use feature 'say';         # load the 'say' feature from Perl's standard library
+say "This uses say()";     # say() is like print but automatically adds \n at the end
+say "No need for \\n";     # \\ prints a literal backslash character in the output

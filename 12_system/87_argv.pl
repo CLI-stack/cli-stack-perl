@@ -1,55 +1,48 @@
 #!/usr/bin/perl
-# LESSON 87: Command-Line Arguments (@ARGV)
+# LESSON 87: Command-Line Arguments with @ARGV
+# @ARGV holds arguments passed to the script on the command line
+# Try running: perl 87_argv.pl hello world --name=Alice --debug
 
 use strict;
 use warnings;
 use feature 'say';
 
-# @ARGV contains all arguments passed to the script
-# Run: perl 87_argv.pl hello world 42
+# @ARGV is automatically filled with command-line arguments
+say "Number of arguments: " . scalar(@ARGV);     # how many args were passed
+say "Arguments: " . join(", ", @ARGV);           # all args as comma-separated list
 
-say "Number of arguments: " . scalar(@ARGV);
-say "Arguments: " . join(", ", @ARGV);
-
-# Access individually
+# Access individual arguments by index
 if (@ARGV) {
-    say "First arg : $ARGV[0]";
-    say "Last arg  : $ARGV[-1]";
+    say "First arg : $ARGV[0]";    # first argument passed
+    say "Last arg  : $ARGV[-1]";   # last argument (-1 = last element)
 }
 
-# Process arguments
+# Show each argument with its index
 for my $i (0..$#ARGV) {
     say "  ARGV[$i] = '$ARGV[$i]'";
 }
 
-# Shift arguments (common pattern)
-# if (@ARGV) {
-#     my $filename = shift @ARGV;
-#     my $option   = shift @ARGV // "default";
-# }
-
-# Simple flag processing
-my %opts;
-my @pos_args;
+# Simple manual option parsing (for real apps use Getopt::Long module)
+my %opts;       # will hold --key=value or --flag options
+my @pos_args;   # will hold positional (non-option) arguments
 
 for my $arg (@ARGV) {
-    if ($arg =~ /^--(\w+)=(.+)$/) {
-        $opts{$1} = $2;          # --key=value
-    } elsif ($arg =~ /^--(\w+)$/) {
-        $opts{$1} = 1;           # --flag
-    } elsif ($arg =~ /^-(\w)$/) {
-        $opts{$1} = 1;           # -f
+    if ($arg =~ /^--(\w+)=(.+)$/) {    # --key=value format
+        $opts{$1} = $2;                 # $1 = key, $2 = value
+    } elsif ($arg =~ /^--(\w+)$/) {    # --flag format (boolean flag)
+        $opts{$1} = 1;                  # mark as true
+    } elsif ($arg =~ /^-(\w)$/) {      # -f short flag format
+        $opts{$1} = 1;
     } else {
-        push @pos_args, $arg;    # positional
+        push @pos_args, $arg;           # anything else is a positional argument
     }
 }
 
-say "\n=== Parsed args ===";
+say "\n=== Parsed arguments ===";
 say "Flags/options:";
-say "  $_ = $opts{$_}" for sort keys %opts;
-say "Positional: " . join(", ", @pos_args);
+say "  $_ = $opts{$_}" for sort keys %opts;   # print all parsed options
+say "Positional args: " . join(", ", @pos_args);
 
 say "\nTry running: perl $0 hello world --name=Alice --debug -v";
-
-# $0 = script name
-say "\nScript name: $0";
+# $0 = the name/path of the currently running script (set by Perl)
+say "Script name: $0";

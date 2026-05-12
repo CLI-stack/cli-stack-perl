@@ -1,39 +1,40 @@
 #!/usr/bin/perl
-# LESSON 25: shift, unshift - Add/Remove from Front of Array
+# LESSON 25: shift and unshift - Add/Remove from the FRONT of an Array
+# Opposite of push/pop - these operate on the beginning of the array
 
 use strict;
 use warnings;
 use feature 'say';
 
-my @queue = ("first", "second", "third");
+my @queue = ("first", "second", "third");   # start with 3 elements
 
-# unshift - add to FRONT
-unshift @queue, "new_first";
-say "After unshift: " . join(", ", @queue);
+# unshift(array, items) - adds items to the FRONT (beginning) of the array
+unshift @queue, "new_first";                         # adds to front
+say "After unshift: " . join(", ", @queue);          # prints: new_first, first, second, third
 
-unshift @queue, "a", "b";
-say "After unshift x2: " . join(", ", @queue);
+unshift @queue, "a", "b";                            # add multiple items to front at once
+say "After unshift x2: " . join(", ", @queue);       # a, b come before everything else
 
-# shift - remove from FRONT (returns removed item)
-my $front = shift @queue;
-say "Shifted out: $front";
-say "After shift: " . join(", ", @queue);
+# shift(array) - removes and RETURNS the FIRST element
+my $front = shift @queue;                            # removes and returns "a"
+say "Shifted out: $front";                           # prints: a
+say "After shift: " . join(", ", @queue);            # one less at front
 
-# Using as a FIFO queue (First In First Out)
-say "\n--- Queue demo ---";
+# FIFO = First In First Out - the classic queue behaviour
+say "\n--- Queue demo (FIFO) ---";
 my @line = ();
-push  @line, "customer1";   # add to back
-push  @line, "customer2";
-push  @line, "customer3";
+push  @line, "customer1";   # add to BACK of queue
+push  @line, "customer2";   # add to BACK of queue
+push  @line, "customer3";   # add to BACK of queue
 
-while (@line) {
-    my $customer = shift @line;   # remove from front
-    say "Serving: $customer";
+while (@line) {                        # keep looping while queue is not empty
+    my $customer = shift @line;        # take from the FRONT (first arrived = first served)
+    say "Serving: $customer";          # customer1, customer2, customer3 order
 }
 
-# shift is also used to get subroutine arguments!
+# shift is also commonly used inside subroutines to get arguments
 sub greet {
-    my $name = shift;   # gets first argument from @_
+    my $name = shift;   # shift @_ by default inside a sub - gets first argument
     say "Hello, $name!";
 }
-greet("Alice");
+greet("Alice");   # passes "Alice" as the argument

@@ -1,11 +1,12 @@
 #!/usr/bin/perl
-# LESSON 95: Text Processing - Column Extraction and Reporting
+# LESSON 95: Column Extraction and Reporting
+# Parse structured text output and produce formatted reports
 
 use strict;
 use warnings;
 use feature 'say';
 
-# Simulate system process list
+# Simulated 'ps aux' output (process list)
 my @ps_output = (
     "USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND",
     "root         1  0.0  0.1 225828  9104 ?        Ss   Jan14   0:02 /sbin/init",
@@ -16,48 +17,51 @@ my @ps_output = (
     "root      1100  0.0  0.0   3128   780 ?        S    08:10   0:00 sleep 60",
 );
 
-# Skip header
-my $header = shift @ps_output;
+my $header = shift @ps_output;   # remove and store the header line
 say "=== Process Analysis ===";
-say $header;
-say "-" x length($header);
+say $header;                      # show the header
+say "-" x length($header);        # underline it
 
-my @procs;
+my @procs;   # will hold parsed process records
 for my $line (@ps_output) {
-    # Parse fixed-width or split on whitespace
+    # split on whitespace, but limit to 11 parts so COMMAND (last field) stays together
     my @fields = split /\s+/, $line, 11;
     my %proc = (
-        user    => $fields[0],
-        pid     => $fields[1],
-        cpu     => $fields[2],
-        mem     => $fields[3],
-        command => $fields[10] // "",
+        user    => $fields[0],    # username
+        pid     => $fields[1],    # process ID
+        cpu     => $fields[2],    # CPU percentage
+        mem     => $fields[3],    # memory percentage
+        command => $fields[10] // "",  # full command (may be missing if short line)
     );
-    push @procs, \%proc;
-    say $line;
+    push @procs, \%proc;   # store as hash reference
+    say $line;              # also print the original line
 }
 
-# Report: processes by user
-say "\n=== By User ===";
+# Group processes by user
 my %by_user;
 for my $p (@procs) {
-    push @{$by_user{$p->{user}}}, $p;
+    push @{$by_user{$p->{user}}}, $p;   # add process to user's group
 }
+
+say "\n=== By User ===";
 for my $user (sort keys %by_user) {
     say "  $user: " . scalar(@{$by_user{$user}}) . " process(es)";
 }
 
-# Top CPU consumers
-say "\n=== Top CPU ===";
-my @sorted = sort { $b->{cpu} <=> $a->{cpu} } @procs;
+# Sort by CPU usage (descending) and show top consumers
+say "\n=== Top CPU Consumers ===";
+my @sorted = sort { $b->{cpu} <=> $a->{cpu} } @procs;   # sort descending by %CPU
 printf "  %-8s %5s %5s  %s\n", "USER", "PID", "%CPU", "COMMAND";
-for my $p (@sorted[0..2]) {
-    printf "  %-8s %5s %5s  %s\n", $p->{user}, $p->{pid}, $p->{cpu}, substr($p->{command},0,30);
+for my $p (@sorted[0..2]) {   # show top 3
+    printf "  %-8s %5s %5s  %s\n",
+        $p->{user}, $p->{pid}, $p->{cpu}, substr($p->{command}, 0, 30);
 }
 
-# High CPU warning
-my @high_cpu = grep { $_->{cpu} > 5 } @procs;
+# Alert on high CPU
+my @high_cpu = grep { $_->{cpu} > 5 } @procs;   # filter processes above 5% CPU
 if (@high_cpu) {
     say "\nWARNING: High CPU processes:";
-    say "  PID $_{pid} ($_{user}): $_->{cpu}%" for @high_cpu;
+    for my $p (@high_cpu) {
+        say "  PID $p->{pid} ($p->{user}): $p->{cpu}%";
+    }
 }
